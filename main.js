@@ -1,80 +1,35 @@
-import { books, authors, genres, BOOKS_PER_PAGE } from "./data.js"; // imports the data
+import { books, authors, genres, BOOKS_PER_PAGE } from "./data.js";
+import { createBookPreview, renderBookList } from "./bookUtils.js";
+import { renderDropdownOptions } from "./dropdownUtils.js";
+import { filterBooks } from "./filterUtils.js";
+import { applyTheme, detectTheme } from "./themeUtils.js";
 
-let page = 1; // counter which tracks which books viewing. set to 1
-let matches = books; // book array, list of books displayed
+let page = 1;
+let matches = books;
 
-// Function to create a book preview element
-function createBookPreview(book) {
-  const element = document.createElement("button");
-  element.classList = "preview";
-  element.setAttribute("data-preview", book.id);
-
-  element.innerHTML = `
-        <img class="preview__image" src="${book.image}" />
-        <div class="preview__info">
-            <h3 class="preview__title">${book.title}</h3>
-            <div class="preview__author">${authors[book.author]}</div>
-        </div>`;
-
-  return element;
-}
-
-// Function to render a list of book previews
-function renderBookList(bookList, container, start = 0, end = BOOKS_PER_PAGE) {
-  const fragment = document.createDocumentFragment();
-  bookList.slice(start, end).forEach((book) => {
-    const previewElement = createBookPreview(book);
-    fragment.appendChild(previewElement);
-  });
-  container.appendChild(fragment);
-}
-
+// Render initial book list
 renderBookList(matches, document.querySelector("[data-list-items]"));
 
-// Function to create an option element
-function createOptionElement(value, text) {
-  const option = document.createElement("option");
-  option.value = value;
-  option.innerText = text;
-  return option;
-}
-
-// Function to render dropdown options
-function renderDropdownOptions(options, container, defaultOptionText = "Any") {
-  const fragment = document.createDocumentFragment();
-  const defaultOption = createOptionElement("any", defaultOptionText);
-  fragment.appendChild(defaultOption);
-
-  options.forEach((option) => {
-    const optionElement = createOptionElement(option.id, option.name);
-    fragment.appendChild(optionElement);
-  });
-
-  container.appendChild(fragment);
-}
-
-// Convert `genres` and `authors` objects to arrays of {id, name} format
+// Convert genres and authors to arrays
 const genreObjects = Object.entries(genres).map(([id, name]) => ({ id, name }));
 const authorObjects = Object.entries(authors).map(([id, name]) => ({
   id,
   name,
 }));
 
-// Usage for Genres
+// Render dropdowns
 renderDropdownOptions(
   genreObjects,
   document.querySelector("[data-search-genres]"),
   "All Genres",
 );
-
-// Usage for Authors
 renderDropdownOptions(
   authorObjects,
   document.querySelector("[data-search-authors]"),
   "All Authors",
 );
 
-// Function to update the Show More button
+// Update Show More button
 function updateShowMoreButton(matches, page, button) {
   const remainingBooks = matches.length - page * BOOKS_PER_PAGE;
   button.disabled = remainingBooks < 1;
@@ -117,19 +72,7 @@ document
     const formData = new FormData(event.target);
     const { theme } = Object.fromEntries(formData);
 
-    if (theme === "night") {
-      document.documentElement.style.setProperty(
-        "--color-dark",
-        "255, 255, 255",
-      );
-      document.documentElement.style.setProperty("--color-light", "10, 10, 20");
-    } else {
-      document.documentElement.style.setProperty("--color-dark", "10, 10, 20");
-      document.documentElement.style.setProperty(
-        "--color-light",
-        "255, 255, 255",
-      );
-    }
+    applyTheme(theme);
 
     document.querySelector("[data-settings-overlay]").open = false;
   });
@@ -168,20 +111,6 @@ document
     document.querySelector("[data-search-overlay]").open = false;
   });
 
-// Function to filter books based on filters
-function filterBooks({ title, author, genre }, bookList) {
-  return bookList.filter((book) => {
-    const titleMatch =
-      title.trim() === "" ||
-      book.title.toLowerCase().includes(title.toLowerCase());
-    const authorMatch = author === "any" || book.author === author;
-    const genreMatch = genre === "any" || book.genres.includes(genre);
-
-    return titleMatch && authorMatch && genreMatch;
-  });
-}
-
-// Load more results on button click
 document.querySelector("[data-list-button]").addEventListener("click", () => {
   renderBookList(
     matches,
@@ -192,7 +121,6 @@ document.querySelector("[data-list-button]").addEventListener("click", () => {
   page += 1;
 });
 
-// Event delegation to show book details
 document
   .querySelector("[data-list-items]")
   .addEventListener("click", (event) => {
@@ -221,16 +149,5 @@ document
     }
   });
 
-// Theme detection
-if (
-  window.matchMedia &&
-  window.matchMedia("(prefers-color-scheme: dark)").matches
-) {
-  document.querySelector("[data-settings-theme]").value = "night";
-  document.documentElement.style.setProperty("--color-dark", "255, 255, 255");
-  document.documentElement.style.setProperty("--color-light", "10, 10, 20");
-} else {
-  document.querySelector("[data-settings-theme]").value = "day";
-  document.documentElement.style.setProperty("--color-dark", "10, 10, 20");
-  document.documentElement.style.setProperty("--color-light", "255, 255, 255");
-}
+// Detect and apply the theme
+detectTheme();
