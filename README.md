@@ -37,3 +37,12 @@ After completing the tasks, prepare a brief presentation for your coaching group
 Submit the refactored version of the "Book Connect" application, including all HTML, CSS, and JavaScript files. Ensure that your code is well-documented and adheres to the specified Styleguides. Include a written report covering the discussion and reflection points outlined above.
 
 Make sure to submit your project to the LMS on the DJS03 Project Tab.
+
+
+Repetitive tasks include: 
+Form data processing (getFormFilters).
+Genre matching (matchGenre).
+Book filtering (filterBooks).
+Rendering previews (createBookPreview, renderBooks).
+Show more button logic (updateShowMoreButton).
+Book details display (displayBookDetails).

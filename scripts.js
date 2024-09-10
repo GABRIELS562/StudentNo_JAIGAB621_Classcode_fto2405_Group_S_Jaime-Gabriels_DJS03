@@ -3,45 +3,112 @@ import { books, authors, genres, BOOKS_PER_PAGE } from "./data.js"; // imports t
 let page = 1; // counter which tracks which books viewing. set to 1
 let matches = books; // book array, list of books displayed
 
-const starting = document.createDocumentFragment(); //A DocumentFragment is created to hold the book preview elements temporarily. This is used to optimize performance by avoiding multiple reflows/repaints when appending elements to the DOM one at a time.
+// const starting = document.createDocumentFragment(); //A DocumentFragment is created to hold the book preview elements temporarily. This is used to optimize performance by avoiding multiple reflows/repaints when appending elements to the DOM one at a time.
 
-for (const { author, id, image, title } of matches.slice(0, BOOKS_PER_PAGE)) {
+// for (const { author, id, image, title } of matches.slice(0, BOOKS_PER_PAGE)) {
+// 	const element = document.createElement("button");
+// 	element.classList = "preview";
+// 	element.setAttribute("data-preview", id);
+
+// 	element.innerHTML = `
+//         <img
+//             class="preview__image"
+//             src="${image}"
+//         />
+
+//         <div class="preview__info">
+//             <h3 class="preview__title">${title}</h3>
+//             <div class="preview__author">${authors[author]}</div>
+//         </div>
+//     `;
+
+// 	starting.appendChild(element);
+// }
+
+// document.querySelector("[data-list-items]").appendChild(starting);
+
+//The book preview creation and rendering were moved into two functions: createBookPreview (which generates individual book elements) and renderBookList (which handles batch rendering).
+function createBookPreview(book) {
 	const element = document.createElement("button");
 	element.classList = "preview";
-	element.setAttribute("data-preview", id);
+	element.setAttribute("data-preview", book.id);
 
 	element.innerHTML = `
-        <img
-            class="preview__image"
-            src="${image}"
-        />
-
+        <img class="preview__image" src="${book.image}" />
         <div class="preview__info">
-            <h3 class="preview__title">${title}</h3>
-            <div class="preview__author">${authors[author]}</div>
-        </div>
-    `;
+            <h3 class="preview__title">${book.title}</h3>
+            <div class="preview__author">${authors[book.author]}</div>
+        </div>`;
 
-	starting.appendChild(element);
+	return element;
+}
+function renderBookList(bookList, container, start = 0, end = BOOKS_PER_PAGE) {
+	const fragment = document.createDocumentFragment();
+	bookList.slice(start, end).forEach((book) => {
+		const previewElement = createBookPreview(book);
+		fragment.appendChild(previewElement);
+	});
+	container.appendChild(fragment);
+}
+renderBookList(matches, document.querySelector("[data-list-items]"));
+
+// const genreHtml = document.createDocumentFragment();
+// const firstGenreElement = document.createElement("option");
+// firstGenreElement.value = "any";
+// firstGenreElement.innerText = "All Genres";
+// genreHtml.appendChild(firstGenreElement);
+
+// //Generate genre options dynamically: Loops through the genres object, creating an option for each genre with its corresponding id and name, appending each option to the genreHtml fragment.
+// for (const [id, name] of Object.entries(genres)) {
+// 	const element = document.createElement("option");
+// 	element.value = id;
+// 	element.innerText = name;
+// 	genreHtml.appendChild(element);
+// }
+function createOptionElement(value, text) {
+	const option = document.createElement("option");
+	option.value = value;
+	option.innerText = text;
+	return option;
 }
 
-document.querySelector("[data-list-items]").appendChild(starting);
+function renderDropdownOptions(options, container, defaultOptionText = "Any") {
+	const fragment = document.createDocumentFragment();
+	const defaultOption = createOptionElement("any", defaultOptionText);
+	fragment.appendChild(defaultOption);
 
-const genreHtml = document.createDocumentFragment();
-const firstGenreElement = document.createElement("option");
-firstGenreElement.value = "any";
-firstGenreElement.innerText = "All Genres";
-genreHtml.appendChild(firstGenreElement);
+	options.forEach((option) => {
+		const optionElement = createOptionElement(option.id, option.name);
+		fragment.appendChild(optionElement);
+	});
 
-//Generate genre options dynamically: Loops through the genres object, creating an option for each genre with its corresponding id and name, appending each option to the genreHtml fragment.
-for (const [id, name] of Object.entries(genres)) {
-	const element = document.createElement("option");
-	element.value = id;
-	element.innerText = name;
-	genreHtml.appendChild(element);
+	container.appendChild(fragment);
 }
+
+// Usage for Genres
+// Convert `genres` and `authors` objects to arrays of {id, name} format
+
+const genreObjects = Object.entries(genres).map(([id, name]) => ({ id, name }));
+const authorObjects = Object.entries(authors).map(([id, name]) => ({
+	id,
+	name,
+}));
+renderDropdownOptions(
+	genreObjects,
+	document.querySelector("[data-search-genres]"),
+	"All Genres",
+);
+
+// Usage for Authors
+renderDropdownOptions(
+	authorObjects,
+	document.querySelector("[data-search-authors]"),
+	"All Authors",
+);
+
 //Repeat spotted!!!
 document.querySelector("[data-search-genres]").appendChild(genreHtml);
+
 //	Create author options: Similar to genres, initializes a DocumentFragment for author options and creates a default “All Authors” option.
 const authorsHtml = document.createDocumentFragment();
 const firstAuthorElement = document.createElement("option");
