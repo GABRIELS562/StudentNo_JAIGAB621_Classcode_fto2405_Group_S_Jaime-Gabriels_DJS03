@@ -1,4 +1,3 @@
-// Function to apply the selected theme
 export function applyTheme(theme) {
   if (theme === "night") {
     document.documentElement.style.setProperty("--color-dark", "255, 255, 255");
@@ -12,16 +11,12 @@ export function applyTheme(theme) {
   }
 }
 
-// Function to detect and apply the theme based on user preference
 export function detectTheme() {
   if (
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches
   ) {
-    document.querySelector("[data-settings-theme]").value = "night";
-    applyTheme("night");
-  } else {
-    document.querySelector("[data-settings-theme]").value = "day";
-    applyTheme("day");
+    return "night";
   }
+  return "day";
 }

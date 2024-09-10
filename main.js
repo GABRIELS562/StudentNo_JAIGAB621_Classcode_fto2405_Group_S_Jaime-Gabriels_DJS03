@@ -1,23 +1,23 @@
 import { books, authors, genres, BOOKS_PER_PAGE } from "./data.js";
-import { createBookPreview, renderBookList } from "./bookUtils.js";
-import { renderDropdownOptions } from "./dropdownUtils.js";
-import { filterBooks } from "./filterUtils.js";
-import { applyTheme, detectTheme } from "./themeUtils.js";
+import {
+  renderBookList,
+  renderDropdownOptions,
+  updateShowMoreButton,
+} from "./Ui.js"; // corrected file name
+import { setupSearchForm } from "./search.js";
+import { applyTheme, detectTheme } from "./settings.js";
 
-let page = 1;
-let matches = books;
+let page = 1; // counter which tracks which books viewing. set to 1
+let matches = books; // book array, list of books displayed
 
-// Render initial book list
-renderBookList(matches, document.querySelector("[data-list-items]"));
-
-// Convert genres and authors to arrays
+// Convert `genres` and `authors` objects to arrays of {id, name} format
 const genreObjects = Object.entries(genres).map(([id, name]) => ({ id, name }));
 const authorObjects = Object.entries(authors).map(([id, name]) => ({
   id,
   name,
 }));
 
-// Render dropdowns
+// Setup dropdowns
 renderDropdownOptions(
   genreObjects,
   document.querySelector("[data-search-genres]"),
@@ -29,15 +29,16 @@ renderDropdownOptions(
   "All Authors",
 );
 
-// Update Show More button
-function updateShowMoreButton(matches, page, button) {
-  const remainingBooks = matches.length - page * BOOKS_PER_PAGE;
-  button.disabled = remainingBooks < 1;
-  button.innerHTML = `
-        <span>Show more</span>
-        <span class="list__remaining"> (${remainingBooks > 0 ? remainingBooks : 0})</span>
-    `;
-}
+// Initial render
+renderBookList(matches, document.querySelector("[data-list-items]"));
+
+// Setup search form
+setupSearchForm(
+  document.querySelector("[data-search-form]"),
+  books,
+  matches,
+  page,
+);
 
 // Event listeners
 document.querySelector("[data-search-cancel]").addEventListener("click", () => {
@@ -71,44 +72,8 @@ document
     event.preventDefault();
     const formData = new FormData(event.target);
     const { theme } = Object.fromEntries(formData);
-
     applyTheme(theme);
-
     document.querySelector("[data-settings-overlay]").open = false;
-  });
-
-document
-  .querySelector("[data-search-form]")
-  .addEventListener("submit", (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const filters = Object.fromEntries(formData);
-    const filteredBooks = filterBooks(filters, books);
-
-    matches = filteredBooks;
-    document.querySelector("[data-list-items]").innerHTML = "";
-
-    if (filteredBooks.length < 1) {
-      document
-        .querySelector("[data-list-message]")
-        .classList.add("list__message_show");
-    } else {
-      document
-        .querySelector("[data-list-message]")
-        .classList.remove("list__message_show");
-      renderBookList(
-        filteredBooks,
-        document.querySelector("[data-list-items]"),
-      );
-      updateShowMoreButton(
-        matches,
-        page,
-        document.querySelector("[data-list-button]"),
-      );
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    document.querySelector("[data-search-overlay]").open = false;
   });
 
 document.querySelector("[data-list-button]").addEventListener("click", () => {
@@ -145,9 +110,11 @@ document
       document.querySelector("[data-list-subtitle]").innerText =
         `${authors[active.author]} (${new Date(active.published).getFullYear()})`;
       document.querySelector("[data-list-description]").innerText =
-        active.description;
+        active.description; // fixed syntax error
     }
   });
 
-// Detect and apply the theme
-detectTheme();
+// Set initial theme based on user preference
+const initialTheme = detectTheme();
+applyTheme(initialTheme);
+document.querySelector("[data-settings-theme]").value = initialTheme;

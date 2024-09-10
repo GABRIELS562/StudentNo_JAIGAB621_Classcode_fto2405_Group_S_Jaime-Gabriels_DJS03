@@ -1,4 +1,10 @@
-// Function to filter books based on filters
+export function createOptionElement(value, text) {
+  const option = document.createElement("option");
+  option.value = value;
+  option.innerText = text;
+  return option;
+}
+
 export function filterBooks({ title, author, genre }, bookList) {
   return bookList.filter((book) => {
     const titleMatch =
