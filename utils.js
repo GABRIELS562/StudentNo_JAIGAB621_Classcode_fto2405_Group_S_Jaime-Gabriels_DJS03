@@ -9,7 +9,7 @@
  */
 export function createBookPreview(book, authors) {
   const element = document.createElement("button");
-  element.classList = "preview";
+  element.classList.add("preview");
   element.setAttribute("data-preview", book.id);
 
   element.innerHTML = `
