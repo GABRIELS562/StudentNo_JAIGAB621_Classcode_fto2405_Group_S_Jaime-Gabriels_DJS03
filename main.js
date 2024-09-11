@@ -1,3 +1,4 @@
+// @ts-check
 import { books, authors, genres, BOOKS_PER_PAGE } from "./data.js"; // Import the data
 import {
   renderBookList,
@@ -9,7 +10,13 @@ import {
 let page = 1; // counter which tracks which books are being viewed
 let matches = books; // book array, list of books displayed
 
-// Ensure that the initial book list renders on page load
+/**
+ * @param {Array} books - Array of book objects.
+ * @param {HTMLElement} container - The HTML element where the book list will be rendered.
+ * @param {Object} authors - Object containing author details.
+ * @param {number} start - The starting index for the book list.
+ * @param {number} end - The ending index for the book list.
+ */
 renderBookList(
   matches,
   document.querySelector("[data-list-items]"),
@@ -17,6 +24,13 @@ renderBookList(
   0,
   32,
 );
+
+/**
+ * @param {Array} books - Array of book objects.
+ * @param {number} page - The current page number.
+ * @param {HTMLElement} button - The HTML element for the "Show More" button.
+ * @param {number} booksPerPage - The number of books to display per page.
+ */
 updateShowMoreButton(
   matches,
   page,
@@ -31,21 +45,24 @@ const authorObjects = Object.entries(authors).map(([id, name]) => ({
   name,
 }));
 
-// Usage for Genres
+/**
+ * @param {Array} options - Array of genre or author objects.
+ * @param {HTMLElement} dropdown - The HTML element for the dropdown.
+ * @param {string} defaultOption - The default option for the dropdown.
+ */
 renderDropdownOptions(
   genreObjects,
   document.querySelector("[data-search-genres]"),
   "All Genres",
 );
 
-// Usage for Authors
 renderDropdownOptions(
   authorObjects,
   document.querySelector("[data-search-authors]"),
   "All Authors",
 );
 
-// Event listeners
+// Event listeners for opening and closing overlays
 document.querySelector("[data-search-cancel]").addEventListener("click", () => {
   document.querySelector("[data-search-overlay]").open = false;
 });
@@ -71,6 +88,7 @@ document.querySelector("[data-list-close]").addEventListener("click", () => {
   document.querySelector("[data-list-active]").open = false;
 });
 
+// Theme selection logic
 document
   .querySelector("[data-settings-form]")
   .addEventListener("submit", (event) => {
@@ -95,6 +113,9 @@ document
     document.querySelector("[data-settings-overlay]").open = false;
   });
 
+/**
+ * @param {Event} event - The event object from form submission.
+ */
 document
   .querySelector("[data-search-form]")
   .addEventListener("submit", (event) => {

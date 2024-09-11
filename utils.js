@@ -1,4 +1,12 @@
+// @ts-check
 // Function to create a book preview element
+/**
+ * Creates a preview button element for a book.
+ *
+ * @param {Object} book - The book object containing details like title, author, image, and id.
+ * @param {Object} authors - A map of author IDs to author names.
+ * @returns {HTMLElement} - The created preview button element.
+ */
 export function createBookPreview(book, authors) {
   const element = document.createElement("button");
   element.classList = "preview";
