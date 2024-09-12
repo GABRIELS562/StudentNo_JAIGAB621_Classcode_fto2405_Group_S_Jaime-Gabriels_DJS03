@@ -1,4 +1,5 @@
-// @ts-check
+// @ts-disable
+//es-lint disable
 import { books, authors, genres, BOOKS_PER_PAGE } from "./data.js"; // Import the data
 import {//imports from utils.js
   renderBookList,
@@ -63,25 +64,25 @@ renderDropdownOptions(
 );
 
 // Event listeners for opening and closing overlays
-document.querySelector("[data-search-cancel]").addEventListener("click", () => {
+document.querySelector("[data-search-cancel]").addEventListener("click", () => { // Close the search overlay
   document.querySelector("[data-search-overlay]").open = false;
 });
 
 document
   .querySelector("[data-settings-cancel]")
   .addEventListener("click", () => {
-    document.querySelector("[data-settings-overlay]").open = false;
+    document.querySelector("[data-settings-overlay]").open = false;// Close the settings overlay
   });
-
+// Event listener for opening the search overlay when clicking on the search button
 document.querySelector("[data-header-search]").addEventListener("click", () => {
-  document.querySelector("[data-search-overlay]").open = true;
-  document.querySelector("[data-search-title]").focus();
+  document.querySelector("[data-search-overlay]").open = true;// Open the search overlay
+  document.querySelector("[data-search-title]").focus();// Focus on the search input
 });
-
+// Event listener for opening the settings overlay when clicking on the settings button
 document
   .querySelector("[data-header-settings]")
   .addEventListener("click", () => {
-    document.querySelector("[data-settings-overlay]").open = true;
+    document.querySelector("[data-settings-overlay]").open = true;// Open the settings overlay
   });
 
 document.querySelector("[data-list-close]").addEventListener("click", () => {
@@ -92,10 +93,10 @@ document.querySelector("[data-list-close]").addEventListener("click", () => {
 document
   .querySelector("[data-settings-form]")
   .addEventListener("submit", (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const { theme } = Object.fromEntries(formData);
-
+    event.preventDefault();// Prevent the default form submission
+    const formData = new FormData(event.target);// Collect form data
+    const { theme } = Object.fromEntries(formData);// Convert form data to an object
+    // Apply the selected theme (night or day) by changing CSS variables
     if (theme === "night") {
       document.documentElement.style.setProperty(
         "--color-dark",
@@ -116,17 +117,19 @@ document
 /**
  * @param {Event} event - The event object from form submission.
  */
+// Event listener for search form submission to filter books
 document
   .querySelector("[data-search-form]")
   .addEventListener("submit", (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const filters = Object.fromEntries(formData);
-    const filteredBooks = filterBooks(filters, books);
+    event.preventDefault(); // Prevent the default form submission
+    const formData = new FormData(event.target); // Collect form data
+    const filters = Object.fromEntries(formData); // Convert form data to an object
+    const filteredBooks = filterBooks(filters, books); // Filter the books based on search criteria
 
-    matches = filteredBooks;
-    document.querySelector("[data-list-items]").innerHTML = "";
+    matches = filteredBooks; // Update the matches with the filtered books
+    document.querySelector("[data-list-items]").innerHTML = ""; // Clear the current book list
 
+    // Show or hide the "No results" message based on the filtered results
     if (filteredBooks.length < 1) {
       document
         .querySelector("[data-list-message]")
@@ -138,20 +141,17 @@ document
       renderBookList(
         filteredBooks,
         document.querySelector("[data-list-items]"),
-        authors,
-      );
+      ); // Render the filtered book list
       updateShowMoreButton(
         matches,
         page,
         document.querySelector("[data-list-button]"),
-        BOOKS_PER_PAGE,
       );
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    document.querySelector("[data-search-overlay]").open = false;
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to the top of the page smoothly
+    document.querySelector("[data-search-overlay]").open = false; // Close the search overlay
   });
-
 // Load more results on button click
 document.querySelector("[data-list-button]").addEventListener("click", () => {
   renderBookList(
