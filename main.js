@@ -18,7 +18,7 @@ let matches = books; // book array, list of books displayed
  * @param {number} start - The starting index for the book list.
  * @param {number} end - The ending index for the book list.
  */
-renderBookList(
+renderBookList(// Render the initial list of book previews
   matches,
   document.querySelector("[data-list-items]"),
   authors,
@@ -118,40 +118,41 @@ document
  * @param {Event} event - The event object from form submission.
  */
 // Event listener for search form submission to filter books
-document
-  .querySelector("[data-search-form]")
-  .addEventListener("submit", (event) => {
-    event.preventDefault(); // Prevent the default form submission
-    const formData = new FormData(event.target); // Collect form data
-    const filters = Object.fromEntries(formData); // Convert form data to an object
-    const filteredBooks = filterBooks(filters, books); // Filter the books based on search criteria
+document.querySelector("[data-search-form]").addEventListener("submit", (event) => {
+  event.preventDefault();
 
-    matches = filteredBooks; // Update the matches with the filtered books
-    document.querySelector("[data-list-items]").innerHTML = ""; // Clear the current book list
+  // Collect form data into an object
+  const formData = new FormData(event.target);
+  const filters = Object.fromEntries(formData);
 
-    // Show or hide the "No results" message based on the filtered results
-    if (filteredBooks.length < 1) {
-      document
-        .querySelector("[data-list-message]")
-        .classList.add("list__message_show");
-    } else {
-      document
-        .querySelector("[data-list-message]")
-        .classList.remove("list__message_show");
-      renderBookList(
-        filteredBooks,
-        document.querySelector("[data-list-items]"),
-      ); // Render the filtered book list
-      updateShowMoreButton(
-        matches,
-        page,
-        document.querySelector("[data-list-button]"),
-      );
-    }
+  // Filter books based on the form data
+  const filteredBooks = filterBooks(filters, books);
 
-    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to the top of the page smoothly
-    document.querySelector("[data-search-overlay]").open = false; // Close the search overlay
-  });
+  // Update the matches array and clear the book list
+  matches = filteredBooks;
+  document.querySelector("[data-list-items]").innerHTML = "";
+
+  // Show or hide "No results found" message
+  if (filteredBooks.length < 1) {
+    document.querySelector("[data-list-message]").classList.add("list__message_show");
+  } else {
+    document.querySelector("[data-list-message]").classList.remove("list__message_show");
+
+    // Render filtered book list
+    renderBookList(filteredBooks, document.querySelector("[data-list-items]"), authors);
+
+    // Update the "Show More" button
+    updateShowMoreButton(
+      matches,
+      page,
+      document.querySelector("[data-list-button]")
+    );
+  }
+
+  // Scroll to the top and close the search overlay
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  document.querySelector("[data-search-overlay]").open = false;
+});
 // Load more results on button click
 document.querySelector("[data-list-button]").addEventListener("click", () => {
   renderBookList(

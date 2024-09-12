@@ -84,11 +84,13 @@ export function updateShowMoreButton(matches, page, button, BOOKS_PER_PAGE) {// 
 export function filterBooks({ title, author, genre }, bookList) {
   return bookList.filter((book) => {
     const titleMatch =
-      title.trim() === "" || // Match title
-      book.title.toLowerCase().includes(title.toLowerCase());
-    const authorMatch = author === "any" || book.author === author;// Match author
-    const genreMatch = genre === "any" || book.genres.includes(genre);// Match genre
+      title.trim() === "" || // If title filter is empty, match all titles
+      book.title.toLowerCase().includes(title.toLowerCase()); // Otherwise, check if the title includes the search term
 
-    return titleMatch && authorMatch && genreMatch;
-  });// Return books that match all criteria
+    const authorMatch = author === "any" || book.author === author; // Match if the author is "any" or matches the selected author ID
+
+    const genreMatch = genre === "any" || book.genres.includes(genre); // Match if genre is "any" or is included in the book's genre array
+
+    return titleMatch && authorMatch && genreMatch; // Return true if all conditions match
+  });
 }
