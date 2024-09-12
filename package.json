@@ -1,0 +1,19 @@
+{
+  "name": "studentno_jaigab621_classcode_fto2405_group_s_jaime-gabriels_djs03",
+  "version": "1.0.0",
+  "description": "Dive into the delightful world of \"Book Connect,\" where literary adventures await at your fingertips! Browse, explore, and uncover your next great read from a vast, vibrant collection. Whether you're a fan of thrilling mysteries, epic fantasies, or heartwarming romances, \"Book Connect\" brings the magic of books directly to you. Happy reading!",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "eslint": "^9.10.0",
+    "eslint-config-prettier": "^9.1.0",
+    "exact": "^1.0.1",
+    "globals": "^15.9.0",
+    "prettier": "^3.3.3"
+  }
+}

@@ -1,6 +1,6 @@
 // @ts-check
 import { books, authors, genres, BOOKS_PER_PAGE } from "./data.js"; // Import the data
-import {
+import {//imports from utils.js
   renderBookList,
   renderDropdownOptions,
   updateShowMoreButton,

@@ -8,10 +8,11 @@
  * @returns {HTMLElement} - The created preview button element.
  */
 export function createBookPreview(book, authors) {
-  const element = document.createElement("button");
-  element.classList.add("preview");
-  element.setAttribute("data-preview", book.id);
+  const element = document.createElement("button");// creates button element 
+  element.classList.add("preview"); //assign the class preview to button
+  element.setAttribute("data-preview", book.id);// Set a custom attribute 'data-preview' with the book's id
 
+  // Define the HTML structure of the book preview, displaying image, title, and author
   element.innerHTML = `
         <img class="preview__image" src="${book.image}" />
         <div class="preview__info">
@@ -19,10 +20,11 @@ export function createBookPreview(book, authors) {
             <div class="preview__author">${authors[book.author]}</div>
         </div>`;
 
+         // Return the created element (book preview button)
   return element;
 }
 
-// Function to render a list of book previews
+// Function to render a list of book previews on page
 export function renderBookList(
   bookList,
   container,
@@ -30,59 +32,63 @@ export function renderBookList(
   start = 0,
   end = 10,
 ) {
-  const fragment = document.createDocumentFragment();
+  const fragment = document.createDocumentFragment();// Create a document fragment to efficiently append multiple elements
   bookList.slice(start, end).forEach((book) => {
-    const previewElement = createBookPreview(book, authors);
-    fragment.appendChild(previewElement);
+    const previewElement = createBookPreview(book, authors);// Create a book preview
+    fragment.appendChild(previewElement);// Append it to the fragment
   });
-  container.appendChild(fragment);
+  container.appendChild(fragment);// Append the fragment with all book previews to the container
 }
 
 // Function to create an option element
 export function createOptionElement(value, text) {
-  const option = document.createElement("option");
-  option.value = value;
-  option.innerText = text;
-  return option;
+  const option = document.createElement("option");// Create an option element
+  option.value = value;// Set the option's value
+  option.innerText = text;// Set the option's display text
+  return option;// Return the created option element
 }
 
 // Function to render dropdown options
+/**
+ * @param {any[]} options
+ * @param {{ appendChild: (arg0: DocumentFragment) => void; }} container
+ */
 export function renderDropdownOptions(
   options,
   container,
   defaultOptionText = "Any",
 ) {
-  const fragment = document.createDocumentFragment();
-  const defaultOption = createOptionElement("any", defaultOptionText);
-  fragment.appendChild(defaultOption);
+  const fragment = document.createDocumentFragment();// Create a document fragment
+  const defaultOption = createOptionElement("any", defaultOptionText);// Create a default 'Any' option
+  fragment.appendChild(defaultOption);// Append the default option to the fragment
 
   options.forEach((option) => {
-    const optionElement = createOptionElement(option.id, option.name);
-    fragment.appendChild(optionElement);
+    const optionElement = createOptionElement(option.id, option.name); // Create an option for each item
+    fragment.appendChild(optionElement);// Append each option to the fragment
   });
 
-  container.appendChild(fragment);
+  container.appendChild(fragment);  // Append the fragment containing all options to the container
 }
 
 // Function to update the Show More button
-export function updateShowMoreButton(matches, page, button, BOOKS_PER_PAGE) {
+export function updateShowMoreButton(matches, page, button, BOOKS_PER_PAGE) {// Calculate the number of remaining books
   const remainingBooks = matches.length - page * BOOKS_PER_PAGE;
-  button.disabled = remainingBooks < 1;
+  button.disabled = remainingBooks < 1;// Disable the button if no books are left
   button.innerHTML = `
         <span>Show more</span>
-        <span class="list__remaining"> (${remainingBooks > 0 ? remainingBooks : 0})</span>
+        <span class="list__remaining"> (${remainingBooks > 0 ? remainingBooks : 0})</span> 
     `;
-}
+}// Update the button text with the remaining books count
 
-// Function to filter books based on filters
+// Function to filter books based on search criteria (title, author, genre)
 export function filterBooks({ title, author, genre }, bookList) {
   return bookList.filter((book) => {
     const titleMatch =
-      title.trim() === "" ||
+      title.trim() === "" || // Match title
       book.title.toLowerCase().includes(title.toLowerCase());
-    const authorMatch = author === "any" || book.author === author;
-    const genreMatch = genre === "any" || book.genres.includes(genre);
+    const authorMatch = author === "any" || book.author === author;// Match author
+    const genreMatch = genre === "any" || book.genres.includes(genre);// Match genre
 
     return titleMatch && authorMatch && genreMatch;
-  });
+  });// Return books that match all criteria
 }
