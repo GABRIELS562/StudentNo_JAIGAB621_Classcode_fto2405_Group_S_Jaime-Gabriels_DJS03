@@ -25,7 +25,7 @@ export function createBookPreview(book, authors) {
 }
 
 // Function to render a list of book previews on page
-export function renderBookList(
+export function renderBookList(// Have this function in main.js which states 32books
   bookList,
   container,
   authors,
@@ -40,7 +40,7 @@ export function renderBookList(
   container.appendChild(fragment);// Append the fragment with all book previews to the container
 }
 
-// Function to create an option element
+//This function creates a dropdown <option> element for filters like genres and authors.
 export function createOptionElement(value, text) {
   const option = document.createElement("option");// Create an option element
   option.value = value;// Set the option's value
@@ -53,10 +53,10 @@ export function createOptionElement(value, text) {
  * @param {any[]} options
  * @param {{ appendChild: (arg0: DocumentFragment) => void; }} container
  */
-export function renderDropdownOptions(
+export function renderDropdownOptions(//This function renders the options for a dropdown (such as genres or authors) into the specified container.
   options,
   container,
-  defaultOptionText = "Any",
+  defaultOptionText = "Any",//Purpose: Efficiently populates a dropdown (e.g., genre or author filter) with all the necessary options, including a default “Any” option
 ) {
   const fragment = document.createDocumentFragment();// Create a document fragment
   const defaultOption = createOptionElement("any", defaultOptionText);// Create a default 'Any' option

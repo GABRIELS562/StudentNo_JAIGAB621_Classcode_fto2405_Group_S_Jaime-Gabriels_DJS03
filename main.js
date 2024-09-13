@@ -23,8 +23,10 @@ renderBookList(// Render the initial list of book previews
   document.querySelector("[data-list-items]"),
   authors,
   0,
-  32,
+  32, // amount of books that will be displayed on the landing page 
 );
+// Pagination refers to the process of dividing content (like a list of books, articles, or search results) into discrete pages, allowing users to view a subset of the content at a time rather than displaying all items on a single page. This improves user experience by preventing long load times and overwhelming amounts of data on one screen.In your code, pagination is implemented by:Limiting the number of books displayed per page: Each time a user loads a page, only a set number of books (BOOKS_PER_PAGE) is displayed.Loading more books on button click: When the user clicks the “Show More” button, additional books are displayed without loading all books at once. The page variable tracks how many pages of books have been displayed, and more books are loaded in increments.
+
 
 /**
  * @param {Array} books - Array of book objects.
@@ -38,6 +40,9 @@ updateShowMoreButton(
   document.querySelector("[data-list-button]"),
   BOOKS_PER_PAGE,
 );
+// This updates the “Show More” button by checking how many books are left after rendering the current page.
+// If there are books left to display, the button will remain active; otherwise, it will be disabled.
+
 
 // Convert `genres` and `authors` objects to arrays of {id, name} format
 const genreObjects = Object.entries(genres).map(([id, name]) => ({ id, name }));
@@ -45,6 +50,7 @@ const authorObjects = Object.entries(authors).map(([id, name]) => ({
   id,
   name,
 }));
+
 
 /**
  * @param {Array} options - Array of genre or author objects.
@@ -85,6 +91,7 @@ document
     document.querySelector("[data-settings-overlay]").open = true;// Open the settings overlay
   });
 
+	// •	This event listener closes the active book details overlay when the “Close” button is clicked.
 document.querySelector("[data-list-close]").addEventListener("click", () => {
   document.querySelector("[data-list-active]").open = false;
 });
@@ -114,6 +121,8 @@ document
     document.querySelector("[data-settings-overlay]").open = false;
   });
 
+	// •	This handles the theme change functionality, allowing users to switch between “night” and “day” themes by updating the CSS variables.
+	// •	When the form is submitted, the theme is applied, and the settings overlay is closed.
 /**
  * @param {Event} event - The event object from form submission.
  */
@@ -153,6 +162,11 @@ document.querySelector("[data-search-form]").addEventListener("submit", (event) 
   window.scrollTo({ top: 0, behavior: "smooth" });
   document.querySelector("[data-search-overlay]").open = false;
 });
+// This handles the search form submission. The form data is collected and used to filter the list of books.
+// 	•	If no books are found, a “No results found” message is shown. If books are found, they are displayed, and the “Show More” button is updated accordingly.
+// 	•	The page scrolls to the top, and the search overlay is closed.
+
+
 // Load more results on button click
 document.querySelector("[data-list-button]").addEventListener("click", () => {
   renderBookList(
@@ -172,12 +186,14 @@ document.querySelector("[data-list-button]").addEventListener("click", () => {
 });
 
 // Event delegation to show book details
-document
+document //An event listener is attached to the data-list-items element. This element contains the list of book previews.
+// •	The event listener listens for a “click” event. When any part of the data-list-items area is clicked, the function is triggered.
+
   .querySelector("[data-list-items]")
   .addEventListener("click", (event) => {
     const pathArray = Array.from(event.path || event.composedPath());
     let active = null;
-
+//. Finding the Clicked Book
     for (const node of pathArray) {
       if (active) break;
 
@@ -187,13 +203,13 @@ document
         );
       }
     }
-
+//Displaying the Book Details
     if (active) {
-      document.querySelector("[data-list-active]").open = true;
-      document.querySelector("[data-list-blur]").src = active.image;
-      document.querySelector("[data-list-image]").src = active.image;
-      document.querySelector("[data-list-title]").innerText = active.title;
-      document.querySelector("[data-list-subtitle]").innerText =
+      document.querySelector("[data-list-active]").open = true; //document.querySelector("[data-list-active]").open = true;: This opens the dialog (<dialog> element) that will show the book details.
+      document.querySelector("[data-list-blur]").src = active.image;//The blurred background image of the book cover.
+      document.querySelector("[data-list-image]").src = active.image;//The main book cover image.
+      document.querySelector("[data-list-title]").innerText = active.title;//The title of the book.
+      document.querySelector("[data-list-subtitle]").innerText =// The author’s name and publication year.
         `${authors[active.author]} (${new Date(active.published).getFullYear()})`;
       document.querySelector("[data-list-description]").innerText =
         active.description;
